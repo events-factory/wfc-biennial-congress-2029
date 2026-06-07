@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 140" fill="none" role="img" aria-label="WFC Biennial Congress 2029 — Kigali, Rwanda">
+  <!-- Mark: KCC dome merged with a spinal column -->
+  <g transform="translate(4,8) scale(0.92)">
+    <g stroke="#2b7fb5" stroke-width="2.6" stroke-linecap="round">
+      <path d="M10 104 A 50 84 0 0 1 110 104" />
+      <path d="M6 104 H 114" />
+      <path d="M14 92 Q 60 86 106 92" />
+      <path d="M17 78 Q 60 71 103 78" />
+      <path d="M21 63 Q 60 56 99 63" />
+      <path d="M26 48 Q 60 42 94 48" />
+      <path d="M33 35 Q 60 30 87 35" />
+      <path d="M44 25 Q 60 22 76 25" />
+    </g>
+    <g fill="#3d4aa5">
+      <rect x="52" y="20" width="16" height="8"  rx="4" />
+      <rect x="49" y="32" width="22" height="9"  rx="4.5" />
+      <rect x="46" y="45" width="28" height="10" rx="5" />
+      <rect x="44" y="59" width="32" height="11" rx="5.5" />
+      <rect x="46" y="74" width="28" height="10" rx="5" />
+      <rect x="49" y="88" width="22" height="9"  rx="4.5" />
+      <rect x="52" y="101" width="16" height="8" rx="4" />
+    </g>
+  </g>
+
+  <!-- Stacked wordmark -->
+  <g font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="126" y="38" font-size="16" font-weight="600" fill="#2bb3a6" letter-spacing="0.3">Sit Less, Live More</text>
+    <text x="126" y="68" font-size="26" font-weight="800" fill="#3d4aa5" letter-spacing="0.4">WFC BIENNIAL</text>
+    <text x="126" y="96" font-size="26" font-weight="800" fill="#2b7fb5" letter-spacing="0.4">CONGRESS <tspan fill="#3d4aa5">2029</tspan></text>
+    <text x="127" y="120" font-size="15" font-weight="500" fill="#224c77" letter-spacing="2">Kigali &#8211; Rwanda</text>
+  </g>
+</svg>
