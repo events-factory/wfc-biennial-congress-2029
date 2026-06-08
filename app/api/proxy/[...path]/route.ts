@@ -95,13 +95,22 @@ async function proxyRequest(
       body: body || undefined,
     })
 
-    const data = await response.text()
+    // Pass the upstream response through verbatim so binary payloads (e.g. the
+    // xlsx export with its Content-Disposition) survive instead of being
+    // re-encoded as JSON text.
+    const contentType =
+      response.headers.get('content-type') || 'application/json'
+    const responseHeaders: Record<string, string> = {
+      'Content-Type': contentType,
+    }
+    const contentDisposition = response.headers.get('content-disposition')
+    if (contentDisposition) {
+      responseHeaders['Content-Disposition'] = contentDisposition
+    }
 
-    return new NextResponse(data, {
+    return new NextResponse(await response.arrayBuffer(), {
       status: response.status,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: responseHeaders,
     })
   } catch (error) {
     console.error('Proxy error:', error)
