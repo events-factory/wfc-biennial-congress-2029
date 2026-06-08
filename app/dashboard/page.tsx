@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import * as XLSX from 'xlsx';
 import { abstractsApi } from '@/lib/api';
 import type { Abstract } from '@/lib/types';
 import AppLayout from '@/components/AppLayout';
@@ -238,77 +237,21 @@ export default function DashboardPage() {
   };
 
   const exportToExcel = async () => {
-    setExportLoading(true);
-    // Backend caps `limit` at 100 — fetch in pages and concatenate.
-    const PAGE = 100;
-    const all: Abstract[] = [];
-    try {
-      const first = await abstractsApi.getAll(1, PAGE);
-      if (first.data && Array.isArray(first.data)) {
-        all.push(...first.data);
-        const totalPages = first.pagination?.totalPages ?? 1;
-        for (let p = 2; p <= totalPages; p++) {
-          const res = await abstractsApi.getAll(p, PAGE);
-          if (res.data && Array.isArray(res.data)) all.push(...res.data);
-        }
-      }
-    } finally {
-      setExportLoading(false);
-    }
-
-    if (all.length === 0) {
+    if (totalAbstracts === 0) {
       alert('No abstracts to export.');
       return;
     }
-
-    const maxReviewers = isSuperAdmin
-      ? Math.max(0, ...all.map((a) => a.reviews?.length ?? 0))
-      : 0;
-
-    const rows = all.map((a) => {
-      const base: Record<string, string | number> = {
-        ID: a.id,
-        Title: a.title,
-        'Presenter Name': a.presenterFullName,
-        'Presenter Email': a.presenterEmail,
-        'Presenter Phone': a.presenterPhone ?? '',
-        'Presenter Institution': a.presenterInstitution ?? '',
-        'Presenter Country': a.presenterCountry ?? '',
-        'Presenter Gender': a.presenterGender ?? '',
-        'Professional Status': a.professionalStatus ?? '',
-        Category: a.subThemeCategory ?? '',
-        'Presentation Type': a.presentationType ?? '',
-        Status: a.status,
-        Points: a.points ?? '',
-        'Review Note': a.reviewNote ?? '',
-        'Reviewed By': a.reviewedBy ?? '',
-        'Reviewed At': a.reviewedAt ? new Date(a.reviewedAt).toLocaleDateString() : '',
-        'Submitted At': new Date(a.createdAt).toLocaleDateString(),
-      };
-
-      if (isSuperAdmin) {
-        for (let i = 0; i < maxReviewers; i++) {
-          const r = a.reviews?.[i];
-          base[`Reviewer ${i + 1}`] = r?.reviewerEmail ?? '';
-          base[`Reviewer ${i + 1} Score`] = r?.totalScore ?? '';
-        }
-        const sc = a.points ?? 0;
-        const bonus = a.equityPoints ?? 0;
-        base['Average Score'] = a.averageScore ?? '';
-        base['SC'] = a.points ?? '';
-        base['Bonus Points'] = a.equityPoints ?? '';
-        base['Sum (SC + Bonus)'] = sc + bonus;
-      }
-
-      return base;
-    });
-
-    const worksheet = XLSX.utils.json_to_sheet(rows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Abstracts');
-
-    const filename = `abstracts-${new Date().toISOString().slice(0, 10)}.xlsx`;
-    XLSX.writeFile(workbook, filename);
+    setExportLoading(true);
+    try {
+      // The spreadsheet is rendered server-side; we just download what the
+      // backend returns.
+      await abstractsApi.exportExcel();
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert('Export failed. Please try again.');
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   return (
